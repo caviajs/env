@@ -15,7 +15,15 @@ npm install @caviajs/env --save
 <h4>Usage</h4>
 </div>
 
-...
+```typescript
+import { Env } from '@caviajs/env';
+
+// ...
+Env.validate({
+  NODE_ENV: { enum: ['dev', 'prod', 'test'], required: true, type: 'enum' },
+  APP_KEY: { required: true, type: 'string' },
+});
+```
 
 <div align="center">
   <sub>Built with ❤︎ by <a href="https://partyka.dev">Paweł Partyka</a></sub>
