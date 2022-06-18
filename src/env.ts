@@ -13,12 +13,16 @@ import { SchemaNumber } from './types/schema-number';
 import { SchemaString } from './types/schema-string';
 
 export class Env {
-  public static validate(schema: Schema): void | never {
+  public static setup(schema: Schema): void | never {
     const errors: ValidationError[] = [];
 
     for (const [key, value] of Object.entries(schema)) {
       if (isSchemaBoolean(value)) {
-        errors.push(...validateSchemaBoolean(value, process.env[key], ['process', 'env', key]));
+        const { data, errors } = validateSchemaBoolean(value, process.env[key], ['process', 'env', key]);
+
+        process.env[key] = data;
+
+        errors.push(...errors);
       } else if (isSchemaEnum(value)) {
         errors.push(...validateSchemaEnum(value, process.env[key], ['process', 'env', key]));
       } else if (isSchemaNumber(value)) {
@@ -39,4 +43,3 @@ export class Env {
 export interface Schema {
   [name: string]: SchemaBoolean | SchemaEnum | SchemaNumber | SchemaString;
 }
-

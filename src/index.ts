@@ -1,6 +1,6 @@
-export * from './lib/types/schema-string';
-export * from './lib/types/schema-enum';
-export * from './lib/types/schema-number';
-export * from './lib/types/schema-string';
+export * from './types/schema-string';
+export * from './types/schema-enum';
+export * from './types/schema-number';
+export * from './types/schema-string';
 
-export * from './lib/env';
+export * from './env';
