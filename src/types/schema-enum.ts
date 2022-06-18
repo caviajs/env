@@ -1,5 +1,5 @@
 export type SchemaEnum = {
-  enum: (string | number)[];
+  enum: string[];
   nullable?: boolean;
   required?: boolean;
   type: 'enum';
