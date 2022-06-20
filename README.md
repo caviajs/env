@@ -20,7 +20,7 @@ import { Env } from '@caviajs/env';
 
 Env.validate({
   NODE_ENV: {
-    expression: [/^(dev|prod|test)$/],
+    expressions: [/^(dev|prod|test)$/],
     maxLength: 4,
     minLength: 1,
     required: true,
