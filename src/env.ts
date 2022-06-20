@@ -38,7 +38,7 @@ export class Env {
     }
 
     if (errors.length > 0) {
-      throw new Error(errors.join('. '));
+      throw new Error(errors.join('\t'));
     }
   }
 }
