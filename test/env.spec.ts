@@ -42,7 +42,7 @@ describe('Env', () => {
     process.env['CAVIA_ENV'] = 'foo';
 
     expect(() => Env.validate(schema))
-      .toThrow('The process.env.CAVIA_ENV should match a regular expression /^[A-Z]/. The process.env.CAVIA_ENV should match a regular expression /[A-Z]$/.');
+      .toThrow('The process.env.CAVIA_ENV should match a regular expression /^[A-Z]/\tThe process.env.CAVIA_ENV should match a regular expression /[A-Z]$/');
   });
 
   it('should validate the maxLength condition correctly', () => {
