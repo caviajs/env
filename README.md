@@ -18,10 +18,14 @@ npm install @caviajs/env --save
 ```typescript
 import { Env } from '@caviajs/env';
 
-// ...
 Env.validate({
-  NODE_ENV: { enum: ['dev', 'prod', 'test'], required: true, type: 'enum' },
-  APP_KEY: { required: true, type: 'string' },
+  NODE_ENV: {
+    expression: [/^(dev|prod|test)$/],
+    maxLength: 4,
+    minLength: 1,
+    required: true,
+  },
+  // ...
 });
 ```
 
