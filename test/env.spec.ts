@@ -1,16 +1,6 @@
 import { Env, Schema } from '../src';
 
 describe('Env', () => {
-  let writeSpy: jest.SpyInstance;
-
-  beforeEach(() => {
-    writeSpy = jest.spyOn(process.stdout, 'write');
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   afterAll(() => {
     delete process.env['CAVIA_ENV'];
   });
