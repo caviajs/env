@@ -1,45 +1,54 @@
-import { ValidationError } from './types/validation-error';
-import { isSchemaBoolean } from './utils/is-schema-boolean';
-import { validateSchemaBoolean } from './utils/validate-schema-boolean';
-import { isSchemaEnum } from './utils/is-schema-enum';
-import { validateSchemaEnum } from './utils/validate-schema-enum';
-import { isSchemaNumber } from './utils/is-schema-number';
-import { isSchemaString } from './utils/is-schema-string';
-import { validateSchemaNumber } from './utils/validate-schema-number';
-import { validateSchemaString } from './utils/validate-schema-string';
-import { SchemaBoolean } from './types/schema-boolean';
-import { SchemaEnum } from './types/schema-enum';
-import { SchemaNumber } from './types/schema-number';
-import { SchemaString } from './types/schema-string';
+const DEFAULT_REQUIRED: boolean = false;
+
+function getSchemaRequired(schema: any): boolean {
+  return schema.hasOwnProperty('required') ? schema.required : DEFAULT_REQUIRED;
+}
 
 export class Env {
-  public static setup(schema: Schema): void | never {
-    const errors: ValidationError[] = [];
+  public static validate(schema: Schema): void | never {
+    const errors: string[] = [];
 
-    for (const [key, value] of Object.entries(schema)) {
-      if (isSchemaBoolean(value)) {
-        const { data, errors } = validateSchemaBoolean(value, process.env[key], ['process', 'env', key]);
+    for (const [propertyName, propertySchema] of Object.entries(schema)) {
+      const data: string | undefined = process.env[propertyName];
+      const path: string = ['process', 'env', propertyName].join('.');
 
-        process.env[key] = data;
+      if ((getSchemaRequired(propertySchema) === false && data === undefined)) {
+        continue;
+      }
 
-        errors.push(...errors);
-      } else if (isSchemaEnum(value)) {
-        errors.push(...validateSchemaEnum(value, process.env[key], ['process', 'env', key]));
-      } else if (isSchemaNumber(value)) {
-        errors.push(...validateSchemaNumber(value, process.env[key], ['process', 'env', key]));
-      } else if (isSchemaString(value)) {
-        errors.push(...validateSchemaString(value, process.env[key], ['process', 'env', key]));
-      } else {
-        throw new Error('Invalid schema');
+      if (getSchemaRequired(propertySchema) === true && data === undefined) {
+        errors.push(`The ${ path } is required`);
+      }
+
+      if (propertySchema.hasOwnProperty('expressions')) {
+        for (const expression of propertySchema.expressions) {
+          if (typeof data !== 'string' || expression.test(data) === false) {
+            errors.push(`The ${ path } should match a regular expression ${ expression }`);
+          }
+        }
+      }
+
+      if (propertySchema.hasOwnProperty('maxLength') && (typeof data !== 'string' || data.length > propertySchema.maxLength)) {
+        errors.push(`The ${ path } must be shorter than or equal to ${ propertySchema.maxLength } characters`);
+      }
+
+      if (propertySchema.hasOwnProperty('minLength') && (typeof data !== 'string' || data.length < propertySchema.minLength)) {
+        errors.push(`The ${ path } must be longer than or equal to ${ propertySchema.minLength } characters`);
       }
     }
 
     if (errors.length > 0) {
-      throw new Error(errors.toString());
+      throw new Error(errors.join('. '));
     }
   }
 }
 
 export interface Schema {
-  [name: string]: SchemaBoolean | SchemaEnum | SchemaNumber | SchemaString;
+  [name: string]: {
+    expressions?: RegExp[];
+    maxLength?: number;
+    minLength?: number;
+    required?: boolean;
+  };
 }
+
