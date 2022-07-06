@@ -3,29 +3,37 @@
 <p>ecosystem for your guinea pig</p>
 </div>
 
-<div align="center">
-<h4>Installation</h4>
-</div>
+## Introduction
+
+Environment variables are injected from outside-in to your application, 
+and you have little or no control over them within your codebase,
+so you should validate your environment variables.
+
+## Usage
+
+### Installation
 
 ```shell
 npm install @caviajs/env --save
 ```
 
-<div align="center">
-<h4>Usage</h4>
-</div>
+### Validating environment variables
+
+If validation fails, an error will be thrown.
 
 ```typescript
 import { Env } from '@caviajs/env';
 
 Env.validate({
   NODE_ENV: {
-    expressions: [/^(dev|prod|test)$/],
+    expressions: [
+      /^(dev|prod|test)$/,
+    ],
     maxLength: 4,
     minLength: 1,
     required: true,
   },
-  // ...
+  /* ... */
 });
 ```
 
