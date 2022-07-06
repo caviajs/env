@@ -19,8 +19,6 @@ npm install @caviajs/env --save
 
 ### Validating environment variables
 
-If validation fails, an error will be thrown.
-
 ```typescript
 import { Env } from '@caviajs/env';
 
